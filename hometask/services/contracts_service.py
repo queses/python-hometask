@@ -1,7 +1,5 @@
-from sqlalchemy import select, True_
-from sqlalchemy import Engine
+from sqlalchemy import select, and_, Engine
 from sqlalchemy.orm import Session
-from sqlalchemy import and_
 
 from hometask.enums.enums import ProfileType
 from hometask.models.models import Profile
@@ -24,8 +22,16 @@ class ContractsService:
             session.commit()
 
     def get_contractors(self):
-        session = Session(self.db)
-        cond = and_(Profile.type == ProfileType.contractor)
-        print("Profiles:")
-        for profile in session.execute(select(Profile).where(cond)).all():
-            print(profile)
+        with Session(self.db) as session:
+            query = select(Profile).where(and_(Profile.type == ProfileType.contractor))
+            print("Profiles:")
+            for profile in session.execute(query).all():
+                print(profile)
+
+    def update_profile(self):
+        with Session(self.db) as session:
+            print("Updating profiles:")
+            for profile in session.execute(select(Profile).order_by(Profile.id.desc())).first():
+                print("Updating profile " + str(profile.id))
+                profile.last_name = "Wick"
+            session.commit()

@@ -1,8 +1,9 @@
 import random
 
 from dotenv import load_dotenv
+from sqlalchemy.orm import sessionmaker
 
-from hometask.profile_service import ProfileService
+from hometask.services.profile_service import ProfileService
 from hometask.orm import Orm
 
 random.seed()
@@ -10,7 +11,7 @@ load_dotenv()
 
 
 def run() -> None:
-    service = ProfileService(Orm().engine())
+    service = ProfileService(Orm().sessionmaker())
     service.delete_all()
     service.create()
     service.create()

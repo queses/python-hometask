@@ -1,6 +1,7 @@
 from os import getenv
 
 from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 
 # Singleton
@@ -26,3 +27,6 @@ class Orm(object):
         )
 
         return self.__engine
+
+    def sessionmaker(self):
+        return sessionmaker(self.engine())

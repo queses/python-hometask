@@ -1,18 +1,18 @@
 import random
 
 from sqlalchemy import select, Engine
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from hometask.enums import ProfileType
 from hometask.models import Profile
 
 
 class ProfileService:
-    def __init__(self, db: Engine):
-        self.db = db
+    def __init__(self, make_session: sessionmaker[Session]):
+        self.make_session = make_session
 
     def create(self):
-        with Session(self.db) as session:
+        with self.make_session() as session:
             profile = Profile(
                 first_name="John",
                 last_name="Doe",

@@ -1,20 +1,16 @@
-import os
 import random
 
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
 
-from hometask.services.profile_service import ProfileService
+from hometask.profile_service import ProfileService
+from hometask.orm import Orm
 
 random.seed()
 load_dotenv()
 
-db_url = os.getenv("DB_URL")
-db = create_engine(db_url if db_url else "", echo=True)
-
 
 def run() -> None:
-    service = ProfileService(db)
+    service = ProfileService(Orm().engine())
     service.delete_all()
     service.create()
     service.create()

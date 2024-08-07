@@ -3,8 +3,8 @@ import random
 from sqlalchemy import select, Engine
 from sqlalchemy.orm import Session
 
-from hometask.enums.enums import ProfileType
-from hometask.models.models import Profile
+from hometask.enums import ProfileType
+from hometask.models import Profile
 
 
 class ProfileService:

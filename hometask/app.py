@@ -3,11 +3,11 @@ from flask import Flask
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
-from hometask.services.contracts_service import ContractsService
 
 load_dotenv()
 
-db = create_engine(os.getenv("DB_URL"))
+db_url = os.getenv("DB_URL")
+db = create_engine(db_url if db_url else "")
 
 app = Flask(__name__)
 

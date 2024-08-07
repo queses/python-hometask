@@ -1,5 +1,6 @@
 import enum
 
+
 class ProfileType(enum.Enum):
-    client = 'client'
-    contractor = 'contractor'
+    client = "client"
+    contractor = "contractor"

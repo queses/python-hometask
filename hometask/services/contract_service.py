@@ -1,17 +1,19 @@
+from http import HTTPStatus
+
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import or_
 
 from hometask.enums import ContractStatus
-from hometask.exceptions import RequestException
+from hometask.exceptions import AppException
 from hometask.models import Contract
 
 
 class ContractService:
-    def __init__(self, make_session: sessionmaker[Session]):
-        self.make_session = make_session
+    def __init__(self, orm_sessionmaker: sessionmaker[Session]):
+        self.orm_sessionmaker = orm_sessionmaker
 
-    def get_by_id(self, contract_id: int, profile_id: int):
-        with self.make_session() as session:
+    def get_by_id(self, contract_id: int, profile_id: int) -> Contract:
+        with self.orm_sessionmaker() as session:
             contract = (
                 session.query(Contract)
                 .filter(
@@ -21,12 +23,12 @@ class ContractService:
                 .first()
             )
             if not contract:
-                raise RequestException(404, "Contract not found")
+                raise AppException(HTTPStatus.NOT_FOUND, "Contract not found")
 
             return contract
 
     def list_active(self, profile_id: int):
-        with self.make_session() as session:
+        with self.orm_sessionmaker() as session:
             contracts = (
                 session.query(Contract)
                 .filter(

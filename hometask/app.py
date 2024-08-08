@@ -1,40 +1,41 @@
-import json
+from _datetime import datetime
 
-from flask import Flask, request, jsonify
+from flask import Flask, json
 from dotenv import load_dotenv
 
+from hometask.exceptions import AppException
 from hometask.orm import Orm
-from hometask.services.contract_service import ContractService
+from hometask.routers import ContractsRouter
 
 load_dotenv()
-
-orm_sessionmaker = Orm().sessionmaker()
 
 app = Flask(__name__)
 
 
-# def get_profile_decorator()
-#     def decorator(func):
-#         @wraps(func)
-#         def wrapper(*args, **kwargs):
-#             ctx.
-#             result = func(*args, **kwargs)
-#             return func
-#         return wrapper
+# @app.teardown_appcontext
+# def shutdown_session(exception=None) -> None:
+# TODO
+#     # https://docs.sqlalchemy.org/en/14/orm/contextual.html#using-thread-local-scope-with-web-applications
+#     Orm().engine().remove()
 
 
-@app.route("/contracts/3", methods=["GET"])
-def contracts_get_one():
-    contract_id_str = "3"
-    profile_id_str = request.headers.get("profile_id")
-    try:
-        contract_id = int(contract_id_str if contract_id_str else "")
-    except ValueError:
-        return "Contract ID is required", 400
-    try:
-        profile_id = int(profile_id_str if profile_id_str else "")
-    except ValueError:
-        return "Profile ID is required", 400
+class CustomJSONEncoder(json.provider.DefaultJSONProvider):
+    @staticmethod
+    def _custom_default(o):
+        if isinstance(o, datetime):
+            return o.isoformat()  # Convert datetime object to ISO 8601 format string
+        return json.provider.DefaultJSONProvider.default(o)
 
-    resp = ContractService(orm_sessionmaker).get_by_id(contract_id, profile_id)
-    return jsonify(resp)
+    default = _custom_default
+
+
+@app.errorhandler(AppException)
+def handle_app_exception(e):
+    return e.to_dict(), e.code
+
+
+app.json = CustomJSONEncoder(app)
+app.register_error_handler(AppException, handle_app_exception)
+
+orm = Orm()
+ContractsRouter(app, orm)

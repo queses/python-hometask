@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
@@ -12,6 +11,7 @@ from hometask.enums import ProfileType, ContractStatus
 
 class Base(DeclarativeBase):
     pass
+
     metadata = MetaData(
         naming_convention={
             "ix": "ix_%(column_0_label)s",
@@ -21,6 +21,9 @@ class Base(DeclarativeBase):
             "pk": "pk_%(table_name)s",
         }
     )
+
+    def to_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Profile(MappedAsDataclass, Base):
@@ -45,6 +48,7 @@ class Profile(MappedAsDataclass, Base):
     def __repr__(self) -> str:
         return f"#{self.id!r} {self.first_name} {self.last_name} (created {self.created_at.isoformat()!r}, updated {self.updated_at.isoformat()!r})"
 
+
 class Contract(MappedAsDataclass, Base):
     __tablename__ = "contract"
 
@@ -52,9 +56,9 @@ class Contract(MappedAsDataclass, Base):
     terms: Mapped[str]
     status: Mapped[ContractStatus]
     client_id: Mapped[int] = mapped_column(ForeignKey(Profile.id))
-    # client: Mapped[Profile] = relationship(foreign_keys=[client_id], compare=False)
+    client: Mapped[Profile] = relationship(foreign_keys=[client_id], compare=False)
     contractor_id: Mapped[int] = mapped_column(ForeignKey(Profile.id))
-    # contractor: Mapped[Profile] = relationship(foreign_keys=[contractor_id], compare=False)
+    contractor: Mapped[Profile] = relationship(foreign_keys=[contractor_id], compare=False)
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     updated_at: Mapped[datetime] = mapped_column(default=func.now(), onupdate=func.now())
 

@@ -2,7 +2,7 @@ install:
 	poetry install
 
 dev:
-	poetry run flask --app ./hometask/app run
+	poetry run flask --app ./src/app run
 
 migrations-run:
 	poetry run alembic upgrade head

@@ -52,10 +52,10 @@ class Profile(MappedAsDataclass, BaseModel):
 class Contract(MappedAsDataclass, BaseModel):
     __tablename__ = "contract"
 
-    def __init__(self, terms: str, status: ContractStatus, client: Profile, contractor: Profile):
+    def __init__(self, terms: str, client: Profile, contractor: Profile):
         super().__init__()
         self.terms = terms
-        self.status = status
+        self.status = ContractStatus.new
         self.client = client
         self.contractor = contractor
 

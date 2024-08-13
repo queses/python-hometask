@@ -17,6 +17,7 @@ psycopg2-binary = "^2.9.9"
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.6"
 pyright = "^1.1.375"
+pytest = "^8.3.2"
 
 [tool.ruff]
 line-length = 100

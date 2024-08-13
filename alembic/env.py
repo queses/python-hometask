@@ -2,8 +2,8 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from alembic import context
 
-from hometask.orm import Orm
-from hometask.models import Base
+from src.orm import Orm
+from src.models import BaseModel
 
 # ADDED:
 load_dotenv()
@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 # CHANGED:
-target_metadata = Base.metadata
+target_metadata = BaseModel.metadata
 
 
 # other values from the config, defined by the needs of env.py,

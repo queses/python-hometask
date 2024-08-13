@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, environ
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -21,6 +21,9 @@ class Orm(object):
             return self.__engine
 
         db_url = getenv("DB_URL")
+        if "PYTEST_CURRENT_TEST" in environ:
+            db_url = getenv("TEST_DB_URL")
+
         db_echo = getenv("DB_ECHO")
         self.__engine = create_engine(
             db_url if db_url else "", echo=True if db_echo == "1" else False
@@ -30,3 +33,6 @@ class Orm(object):
 
     def sessionmaker(self):
         return sessionmaker(self.engine())
+
+    def session(self):
+        return self.sessionmaker()()

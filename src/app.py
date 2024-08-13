@@ -3,18 +3,18 @@ from _datetime import datetime
 from flask import Flask, json
 from dotenv import load_dotenv
 
-from hometask.exceptions import AppException
-from hometask.orm import Orm
-from hometask.routers import ContractsRouter
+from src.exceptions import AppException
+import src.routes as routes
 
 load_dotenv()
 
 app = Flask(__name__)
 
 
+# TODO
+
 # @app.teardown_appcontext
 # def shutdown_session(exception=None) -> None:
-# TODO
 #     # https://docs.sqlalchemy.org/en/14/orm/contextual.html#using-thread-local-scope-with-web-applications
 #     Orm().engine().remove()
 
@@ -37,5 +37,4 @@ def handle_app_exception(e):
 app.json = CustomJSONEncoder(app)
 app.register_error_handler(AppException, handle_app_exception)
 
-orm = Orm()
-ContractsRouter(app, orm)
+routes.contracts(app)

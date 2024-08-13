@@ -3,9 +3,9 @@ from http import HTTPStatus
 
 from flask import Flask, request
 
-from hometask.exceptions import AppException
-from hometask.services.contract_service import ContractService
-from hometask.orm import Orm
+from src.exceptions import AppException
+from src.services.contract_service import ContractService
+from src.orm import Orm
 
 
 # Place this AFTER @app.route:
@@ -27,11 +27,10 @@ def authenticate():
     return _authenticate
 
 
-class ContractsRouter:
-    def __init__(self, app: Flask, orm: Orm):
-        orm_sessionmaker = orm.sessionmaker()
+def contracts(app: Flask):
+    orm = Orm()
 
-        @app.route("/contracts/<int:contract_id>", methods=["GET"])
-        @authenticate()
-        def contracts_get_one(contract_id: int, profile_id: int):
-            return ContractService(orm_sessionmaker).get_by_id(contract_id, profile_id).to_dict()
+    @app.route("/contracts/<int:contract_id>", methods=["GET"])
+    @authenticate()
+    def contracts_get_one(contract_id: int, profile_id: int):
+        return ContractService(orm.session()).get_by_id(contract_id, profile_id).to_dict()

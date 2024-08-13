@@ -6,10 +6,10 @@ from sqlalchemy import MetaData, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship, Mapped, mapped_column, MappedAsDataclass
 from sqlalchemy.sql import func
 
-from hometask.enums import ProfileType, ContractStatus
+from src.enums import ProfileType, ContractStatus
 
 
-class Base(DeclarativeBase):
+class BaseModel(DeclarativeBase):
     pass
 
     metadata = MetaData(
@@ -26,7 +26,7 @@ class Base(DeclarativeBase):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
-class Profile(MappedAsDataclass, Base):
+class Profile(MappedAsDataclass, BaseModel):
     __tablename__ = "profile"
 
     def __init__(self, first_name: str, last_name: str, profession: str, profile_type: ProfileType):
@@ -49,8 +49,15 @@ class Profile(MappedAsDataclass, Base):
         return f"#{self.id!r} {self.first_name} {self.last_name} (created {self.created_at.isoformat()!r}, updated {self.updated_at.isoformat()!r})"
 
 
-class Contract(MappedAsDataclass, Base):
+class Contract(MappedAsDataclass, BaseModel):
     __tablename__ = "contract"
+
+    def __init__(self, terms: str, status: ContractStatus, client: Profile, contractor: Profile):
+        super().__init__()
+        self.terms = terms
+        self.status = status
+        self.client = client
+        self.contractor = contractor
 
     id: Mapped[int] = mapped_column(primary_key=True)
     terms: Mapped[str]
@@ -63,7 +70,7 @@ class Contract(MappedAsDataclass, Base):
     updated_at: Mapped[datetime] = mapped_column(default=func.now(), onupdate=func.now())
 
 
-class Job(MappedAsDataclass, Base):
+class Job(MappedAsDataclass, BaseModel):
     __tablename__ = "job"
 
     id: Mapped[int] = mapped_column(primary_key=True)

@@ -73,6 +73,12 @@ class Contract(MappedAsDataclass, BaseModel):
 class Job(MappedAsDataclass, BaseModel):
     __tablename__ = "job"
 
+    def __init__(self, description: str, price: Decimal, contract: Contract):
+        super().__init__()
+        self.description = description
+        self.price = price
+        self.contract = contract
+
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str]
     price: Mapped[Decimal]

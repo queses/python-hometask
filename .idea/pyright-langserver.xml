@@ -3,4 +3,7 @@
   <component name="ProjectConfigurations">
     <option name="projectExecutable" value=".venv/bin/pyright-python-langserver" />
   </component>
+  <component name="com.insyncwithfoo.pyrightls.configuration.project.ConfigurationService">
+    <option name="projectExecutable" value=".venv/bin/pyright-python-langserver" />
+  </component>
 </project>

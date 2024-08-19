@@ -4,9 +4,9 @@ from src.exceptions import AppException
 from src.jobs.jobs_service import JobsService
 from src.orm import Orm
 from tests.integration.data_fixtures import (
-    ProfileDataFixture,
-    ContractDataFixture,
-    JobDataFixture,
+    ProfileFixture,
+    ContractFixture,
+    JobFixture,
     DataFixture,
 )
 
@@ -16,19 +16,19 @@ class TestContractsService:
         self.session = Orm().session()
         self.sut = JobsService(self.session)
 
-        self.client_1 = ProfileDataFixture.client()
-        self.client_2 = ProfileDataFixture.client()
-        self.contractor_1 = ProfileDataFixture.client()
-        self.contractor_2 = ProfileDataFixture.client()
-        self.contract_1 = ContractDataFixture(self.client_1.m, self.contractor_1.m)
-        self.contract_2_terminated = ContractDataFixture(
-            self.client_1.m, self.contractor_1.m
+        self.client_1 = ProfileFixture.client()
+        self.client_2 = ProfileFixture.client()
+        self.contractor_1 = ProfileFixture.client()
+        self.contractor_2 = ProfileFixture.client()
+        self.contract_1 = ContractFixture(self.client_1, self.contractor_1)
+        self.contract_2_terminated = ContractFixture(
+            self.client_1, self.contractor_1
         ).terminated()
-        self.contract_3_other = ContractDataFixture(self.client_1.m, self.contractor_2.m)
-        self.job_1 = JobDataFixture(self.contract_1.m)
-        self.job_2_terminated = JobDataFixture(self.contract_2_terminated.m)
-        self.job_3_paid = JobDataFixture(self.contract_1.m).paid()
-        self.job_4_other = JobDataFixture(self.contract_3_other.m)
+        self.contract_3_other = ContractFixture(self.client_1, self.contractor_2)
+        self.job_1 = JobFixture(self.contract_1)
+        self.job_2_terminated = JobFixture(self.contract_2_terminated)
+        self.job_3_paid = JobFixture(self.contract_1).paid()
+        self.job_4_other = JobFixture(self.contract_3_other)
 
     def teardown_method(self):
         self.session.rollback()

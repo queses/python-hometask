@@ -3,7 +3,7 @@ import pytest
 from src.contracts.contracts_service import ContractsService
 from src.exceptions import AppException
 from src.orm import Orm
-from tests.integration.data_fixtures import ProfileDataFixture, ContractDataFixture, DataFixture
+from tests.integration.data_fixtures import ProfileFixture, ContractFixture, DataFixture
 
 
 class TestContractsService:
@@ -11,17 +11,15 @@ class TestContractsService:
         self.session = Orm().session()
         self.sut = ContractsService(self.session)
 
-        self.client_1 = ProfileDataFixture.client()
-        self.client_2 = ProfileDataFixture.client()
-        self.contractor_1 = ProfileDataFixture.contractor()
-        self.contractor_2 = ProfileDataFixture.contractor()
-        self.contract_1 = ContractDataFixture(self.client_1.m, self.contractor_1.m)
-        self.contract_2_in_progress = ContractDataFixture(
-            self.client_1.m, self.contractor_1.m
+        self.client_1 = ProfileFixture.client()
+        self.client_2 = ProfileFixture.client()
+        self.contractor_1 = ProfileFixture.contractor()
+        self.contractor_2 = ProfileFixture.contractor()
+        self.contract_1 = ContractFixture(self.client_1, self.contractor_1)
+        self.contract_2_in_progress = ContractFixture(
+            self.client_1, self.contractor_1
         ).in_progress()
-        self.contract_3_terminated = ContractDataFixture(
-            self.client_1.m, self.contractor_1.m
-        ).terminated()
+        self.contract_3_terminated = ContractFixture(self.client_1, self.contractor_1).terminated()
 
     def test_get_by_id(self):
         DataFixture.save_flush(self.session, self.client_1, self.contractor_1, self.contract_1)
@@ -34,7 +32,12 @@ class TestContractsService:
 
     def test_get_by_id_unauthorized(self):
         DataFixture.save_flush(
-            self.session, self.client_1, self.contractor_1, self.contract_1, self.client_2
+            self.session,
+            self.client_1,
+            self.contractor_1,
+            self.contractor_2,
+            self.contract_1,
+            self.client_2,
         )
         self.session.flush()
 

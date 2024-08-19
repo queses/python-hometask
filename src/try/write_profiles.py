@@ -2,6 +2,7 @@ import random
 
 from dotenv import load_dotenv
 
+from src.enums import ProfileType
 from src.services.profile_service import ProfileService
 from src.orm import Orm
 
@@ -12,9 +13,9 @@ load_dotenv()
 def run() -> None:
     with Orm().session() as session:
         service = ProfileService(session)
-        contractor_1 = service.create_contractor("John", "Wick", "Killer")
+        contractor_1 = service.create("John", "Wick", "Killer", ProfileType.contractor)
         print("Created", contractor_1)
-        contractor_2 = service.create_contractor("John", "Wick", "Killer")
+        contractor_2 = service.create("John", "Wick", "Killer", ProfileType.contractor)
         print("Created", contractor_2)
 
         service.print_contractors()
@@ -22,8 +23,6 @@ def run() -> None:
         updated = service.update_last_name(new_last_name)
         print("Updated", updated)
         service.print_contractors()
-
-        service.delete_all([contractor_1.id, contractor_2.id])
 
 
 if __name__ == "__main__":

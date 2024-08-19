@@ -12,12 +12,14 @@ class ProfileService:
     def __init__(self, session: Session):
         self.session = session
 
-    def create_contractor(self, first_name: str, last_name: str, profession: str) -> Profile:
+    def create(
+        self, first_name: str, last_name: str, profession: str, profile_type: ProfileType
+    ) -> Profile:
         profile = Profile(
             first_name=first_name,
             last_name=last_name,
             profession=profession,
-            profile_type=ProfileType.contractor,
+            profile_type=profile_type,
         )
 
         self.session.add(profile)

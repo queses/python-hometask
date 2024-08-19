@@ -8,7 +8,7 @@ from src.exceptions import AppException
 from src.models import Contract, Profile
 
 
-class ContractService:
+class ContractsService:
     def __init__(self, session: Session):
         self.session = session
 

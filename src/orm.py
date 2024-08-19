@@ -1,7 +1,7 @@
 from os import getenv, environ
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 
 # Singleton
@@ -35,4 +35,4 @@ class Orm(object):
         return sessionmaker(self.engine())
 
     def session(self):
-        return self.sessionmaker()()
+        return Session(self.engine())

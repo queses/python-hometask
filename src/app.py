@@ -1,16 +1,20 @@
 from _datetime import datetime
 
-from flask import Flask, json
 from dotenv import load_dotenv
+from flask import Flask, json
+from pydantic import ValidationError
 from sqlalchemy.orm import scoped_session
 
+from src.contracts.contracts_controller import ContractsController
 from src.exceptions import AppException
 from src.orm import Orm
-import src.routes as routes
 
 load_dotenv()
 
 app = Flask(__name__)
+
+orm = Orm()
+Session = scoped_session(Orm().sessionmaker())
 
 
 class CustomJSONEncoder(json.provider.DefaultJSONProvider):
@@ -25,14 +29,17 @@ class CustomJSONEncoder(json.provider.DefaultJSONProvider):
 
 app.json = CustomJSONEncoder(app)
 
-orm = Orm()
-Session = scoped_session(Orm().sessionmaker())
-
 
 @app.errorhandler(AppException)
-def handle_app_exception(e):
+def handle_app_exception(e: AppException):
     Session().rollback()
     return e.to_dict(), e.code
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e: ValidationError):
+    code = 400
+    return {"code": code, "message": "Validation error", "data": e.errors()}, code
 
 
 @app.teardown_appcontext
@@ -44,4 +51,4 @@ def shutdown_session(exception=None) -> None:
     Session.remove()
 
 
-routes.contracts(app=app, get_session=Session)
+ContractsController(app=app, get_session=Session).register()

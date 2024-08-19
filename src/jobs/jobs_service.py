@@ -13,7 +13,7 @@ class JobsService:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_unpaid(self, profile_id: int) -> list[Job]:
+    def list_unpaid(self, profile_id: int) -> list[Job]:
         jobs = (
             self.session.query(Job)
             .join(Job.contract)

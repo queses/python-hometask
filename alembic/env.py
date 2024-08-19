@@ -2,7 +2,7 @@ from logging.config import fileConfig
 from dotenv import load_dotenv
 from alembic import context
 
-from src.orm import Orm
+from src.util.orm import Orm
 from src.models import BaseModel
 
 # ADDED:

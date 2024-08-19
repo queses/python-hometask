@@ -1,7 +1,8 @@
+from datetime import datetime
 from functools import wraps
 from http import HTTPStatus
 
-from flask import request
+from flask import request, json
 
 from src.exceptions import AppException
 
@@ -23,3 +24,13 @@ def authenticate():
         return authenticate_wrapper
 
     return _authenticate
+
+
+class CustomJSONEncoder(json.provider.DefaultJSONProvider):
+    @staticmethod
+    def _custom_default(o):
+        if isinstance(o, datetime):
+            return o.isoformat()  # Convert datetime object to ISO 8601 format string
+        return json.provider.DefaultJSONProvider.default(o)
+
+    default = _custom_default

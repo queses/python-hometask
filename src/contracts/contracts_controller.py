@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import scoped_session, Session
 
 from src.contracts.contracts_service import ContractsService
-from src.util import authenticate
+from src.util.flask import authenticate
 
 
 class CreateContract(BaseModel):
@@ -30,5 +30,4 @@ class ContractsController:
     @authenticate()
     def create(self, profile_id: int):
         data = CreateContract(**request.get_json())
-
         return self.service().create(profile_id, data.contractor_id, data.terms).to_dict()

@@ -2,7 +2,7 @@ import pytest
 from dotenv import load_dotenv
 
 from src.models import BaseModel
-from src.orm import Orm
+from src.util.orm import Orm
 
 
 @pytest.fixture(scope="session", autouse=True)

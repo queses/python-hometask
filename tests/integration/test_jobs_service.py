@@ -2,7 +2,7 @@ import pytest
 
 from src.exceptions import AppException
 from src.jobs.jobs_service import JobsService
-from src.orm import Orm
+from src.util.orm import Orm
 from tests.integration.data_fixtures import (
     ProfileFixture,
     ContractFixture,
@@ -21,9 +21,7 @@ class TestContractsService:
         self.contractor_1 = ProfileFixture.client()
         self.contractor_2 = ProfileFixture.client()
         self.contract_1 = ContractFixture(self.client_1, self.contractor_1)
-        self.contract_2_terminated = ContractFixture(
-            self.client_1, self.contractor_1
-        ).terminated()
+        self.contract_2_terminated = ContractFixture(self.client_1, self.contractor_1).terminated()
         self.contract_3_other = ContractFixture(self.client_1, self.contractor_2)
         self.job_1 = JobFixture(self.contract_1)
         self.job_2_terminated = JobFixture(self.contract_2_terminated)
@@ -37,43 +35,34 @@ class TestContractsService:
     def test_get_unpaid(self):
         DataFixture.save_flush(
             self.session,
-            self.client_1,
-            self.contractor_1,
-            self.contractor_2,
             self.job_1,
             self.job_2_terminated,
             self.job_3_paid,
             self.job_4_other,
         )
 
-        res_client = self.sut.get_unpaid(self.client_1.m.id)
+        res_client = self.sut.list_unpaid(self.client_1.m.id)
         assert len(res_client) == 2
         assert self.job_1.m in res_client
         assert self.job_4_other.m in res_client
 
-        res_contractor_1 = self.sut.get_unpaid(self.contractor_1.m.id)
+        res_contractor_1 = self.sut.list_unpaid(self.contractor_1.m.id)
         assert len(res_contractor_1) == 1
         assert self.job_1.m in res_contractor_1
 
-        res_contractor_2 = self.sut.get_unpaid(self.contractor_2.m.id)
+        res_contractor_2 = self.sut.list_unpaid(self.contractor_2.m.id)
         assert len(res_contractor_2) == 1
         assert self.job_4_other.m in res_contractor_2
 
     def test_get_unpaid_unauthorized(self):
-        DataFixture.save_flush(
-            self.session,
-            self.contractor_2,
-            self.job_1,
-        )
+        DataFixture.save_flush(self.session, self.contractor_2, self.job_1)
 
-        res = self.sut.get_unpaid(self.contractor_2.m.id)
+        res = self.sut.list_unpaid(self.contractor_2.m.id)
         assert len(res) == 0
 
     def test_pay(self):
         DataFixture.save_flush(
             self.session,
-            self.client_1,
-            self.contractor_1,
             self.job_1,
             self.job_4_other,
         )
@@ -94,7 +83,6 @@ class TestContractsService:
         DataFixture.save_flush(
             self.session,
             self.client_2,
-            self.contractor_1,
             self.job_1,
         )
 

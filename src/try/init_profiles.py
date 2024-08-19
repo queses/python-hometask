@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from src.enums import ProfileType
 from src.services.profile_service import ProfileService
-from src.orm import Orm
+from src.util.orm import Orm
 
 random.seed()
 load_dotenv()

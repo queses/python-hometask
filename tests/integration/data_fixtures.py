@@ -1,58 +1,13 @@
 from datetime import datetime, UTC
 from decimal import Decimal
-from typing import TypeVar, Generic
 
 from faker import Faker
-from sqlalchemy.orm import Session
 
 from src.enums import ProfileType, ContractStatus
 from src.models import Profile, Contract, Job
+from tests.integration.util.data_fixture import DataFixture
 
 fake = Faker()
-
-T = TypeVar("T")
-M = TypeVar("M")
-
-
-class DataFixture(Generic[T]):
-    _model: T
-    __deps: set["DataFixture"] | None = None
-    __added = False
-
-    @staticmethod
-    def save(session: Session, *data_fixtures: "DataFixture"):
-        for data_fixture in data_fixtures:
-            data_fixture.add(session)
-
-    @staticmethod
-    def save_flush(session: Session, *data_fixtures: "DataFixture"):
-        DataFixture.save(session, *data_fixtures)
-        session.flush()
-
-    @property
-    def m(self) -> T:
-        if not self.__added:
-            raise Exception(f"Cannot access the data fixture model that is not added to the session: {type(self).__name__!r}")
-        return self._model
-
-    def add(self, session: Session):
-        if self.__added:
-            return self._model
-
-        for dep in self.__deps or set():
-            dep.add(session)
-
-        session.add(self._model)
-        self.__added = True
-
-        return self._model
-
-    def _unwrap(self, data_fixture: "DataFixture[M]") -> M:
-        if self.__deps is None:
-            self.__deps = set()
-        self.__deps.add(data_fixture)
-
-        return data_fixture._model
 
 
 class ProfileFixture(DataFixture[Profile]):

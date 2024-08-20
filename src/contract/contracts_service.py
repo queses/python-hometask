@@ -1,10 +1,8 @@
-from http import HTTPStatus
-
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
 from src.contract.contract_model import Contract, ContractStatus
-from src.exceptions import AppException
+from src.exceptions import NotFoundException, BadRequestException
 from src.profile.profile_model import Profile
 
 
@@ -22,7 +20,7 @@ class ContractsService:
             .first()
         )
         if not contract:
-            raise AppException(HTTPStatus.NOT_FOUND, "Contract not found")
+            raise NotFoundException("Contract not found")
 
         return contract
 
@@ -40,10 +38,10 @@ class ContractsService:
     def create(self, client_id: int, contractor_id: int, terms: str) -> Contract:
         client = self.session.query(Profile).get(client_id)
         if not client:
-            raise AppException(HTTPStatus.BAD_REQUEST, "Client not found")
+            raise BadRequestException("Client not found")
         contractor = self.session.query(Profile).get(contractor_id)
         if not contractor:
-            raise AppException(HTTPStatus.BAD_REQUEST, "Contractor not found")
+            raise BadRequestException("Contractor not found")
 
         contract = Contract(terms=terms, client=client, contractor=contractor)
         self.session.add(contract)

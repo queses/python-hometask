@@ -1,6 +1,6 @@
 import pytest
 
-from src.exceptions import AppException
+from src.exceptions import NotFoundException, BadRequestException
 from src.job.jobs_service import JobsService
 from src.util.orm import Orm
 from tests.integration.data_fixtures import (
@@ -86,20 +86,17 @@ class TestContractsService:
             self.job_1,
         )
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.pay(self.job_1.m.id, self.client_2.m.id)
-        assert e.value.code == 404
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.pay(self.job_1.m.id, self.contractor_1.m.id)
-        assert e.value.code == 404
 
     def test_pay_check_if_paid(self):
         DataFixture.save_flush(self.session, self.client_1, self.job_3_paid)
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.pay(self.job_3_paid.m.id, self.client_1.m.id)
-        assert e.value.code == 404
 
     def test_pay_check_if_enough_balance(self):
         job_price = 10
@@ -109,6 +106,17 @@ class TestContractsService:
             self.job_1.with_price(job_price),
         )
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(BadRequestException):
             self.sut.pay(self.job_1.m.id, self.client_1.m.id)
-        assert e.value.code == 400
+
+    def test_get_unpaid_sum(self):
+        DataFixture.save_flush(
+            self.session,
+            self.job_1,
+            self.job_2_terminated,
+            self.job_3_paid,
+            self.job_4_other,
+        )
+
+        res = self.sut.get_unpaid_sum(self.client_1.m.id)
+        assert res == self.job_1.m.price + self.job_2_terminated.m.price + self.job_4_other.m.price

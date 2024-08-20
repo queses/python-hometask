@@ -1,11 +1,11 @@
 from datetime import datetime, UTC
-from http import HTTPStatus
+from decimal import Decimal
 
 from sqlalchemy.orm import Session, aliased
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 
 from src.contract.contract_model import Contract, ContractStatus
-from src.exceptions import AppException
+from src.exceptions import NotFoundException, BadRequestException
 from src.job.job_model import Job
 from src.profile.profile_model import Profile
 
@@ -29,7 +29,7 @@ class JobsService:
         return jobs
 
     def pay(self, job_id: int, client_id: int):
-        job = (
+        query = (
             self.session.query(Job)
             .join(Job.contract)
             .join(aliased(Profile), Contract.client)
@@ -37,17 +37,16 @@ class JobsService:
             .filter(
                 Job.id == job_id,
                 Contract.client_id == client_id,
-                Contract.status != ContractStatus.terminated,
                 Job.paid.is_not(True),
             )
-            .with_for_update()
-            .first()
         )
+
+        job = query.with_for_update().first()
         if not job:
-            raise AppException(HTTPStatus.NOT_FOUND, "Job not found")
+            raise NotFoundException("Job not found")
 
         if job.contract.client.balance < job.price:
-            raise AppException(HTTPStatus.BAD_REQUEST, "Insufficient funds")
+            raise BadRequestException("Insufficient funds")
 
         job.paid = True
         job.payment_date = datetime.now(UTC)
@@ -56,3 +55,15 @@ class JobsService:
 
         self.session.flush()
         return job
+
+    def get_unpaid_sum(self, client_id: int) -> Decimal:
+        query = (
+            self.session.query(func.sum(Job.price))
+            .join(Job.contract)
+            .filter(
+                Contract.client_id == client_id,
+                Job.paid.is_not(True),
+            )
+        )
+
+        return query.scalar()

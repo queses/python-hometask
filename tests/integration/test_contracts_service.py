@@ -1,7 +1,7 @@
 import pytest
 
-from src.contracts.contracts_service import ContractsService
-from src.exceptions import AppException
+from src.contract.contracts_service import ContractsService
+from src.exceptions import NotFoundException
 from src.util.orm import Orm
 from tests.integration.data_fixtures import ProfileFixture, ContractFixture, DataFixture
 
@@ -39,17 +39,14 @@ class TestContractsService:
         )
         self.session.flush()
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.get_by_id(self.contract_1.m.id, self.client_2.m.id)
-        assert e.value.code == 404
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.get_by_id(self.contract_1.m.id, self.client_2.m.id)
-        assert e.value.code == 404
 
-        with pytest.raises(AppException) as e:
+        with pytest.raises(NotFoundException):
             self.sut.get_by_id(self.contract_1.m.id, self.contractor_2.m.id)
-        assert e.value.code == 404
 
     def test_list_active(self):
         DataFixture.save_flush(

@@ -1,9 +1,7 @@
-from http import HTTPStatus
-
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.exceptions import AppException
+from src.exceptions import NotFoundException
 from src.profile.profile_model import Profile, ProfileType
 
 
@@ -36,7 +34,7 @@ class ProfileService:
 
         profile = self.session.scalars(query).first()
         if not profile:
-            raise AppException(HTTPStatus.NOT_FOUND, "Profile is not found")
+            raise NotFoundException("Profile is not found")
 
         print(f"Updating profile {profile.id} last name to {last_name!r}")
         profile.last_name = last_name

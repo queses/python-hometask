@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from src.contracts.contracts_controller import CreateContract
+from src.contract.contracts_controller import CreateContract
 
 
 class TestContractsController:

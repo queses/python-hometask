@@ -1,7 +1,7 @@
 import pytest
 
 from src.exceptions import AppException
-from src.jobs.jobs_service import JobsService
+from src.job.jobs_service import JobsService
 from src.util.orm import Orm
 from tests.integration.data_fixtures import (
     ProfileFixture,

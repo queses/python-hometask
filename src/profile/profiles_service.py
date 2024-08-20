@@ -3,9 +3,8 @@ from http import HTTPStatus
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from src.enums import ProfileType
 from src.exceptions import AppException
-from src.models import Profile
+from src.profile.profile_model import Profile, ProfileType
 
 
 class ProfileService:

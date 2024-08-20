@@ -4,9 +4,10 @@ from http import HTTPStatus
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy import or_
 
-from src.enums import ContractStatus
+from src.contract.contract_model import Contract, ContractStatus
 from src.exceptions import AppException
-from src.models import Job, Contract, Profile
+from src.job.job_model import Job
+from src.profile.profile_model import Profile
 
 
 class JobsService:

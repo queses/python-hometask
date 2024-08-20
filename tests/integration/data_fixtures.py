@@ -3,8 +3,9 @@ from decimal import Decimal
 
 from faker import Faker
 
-from src.enums import ProfileType, ContractStatus
-from src.models import Profile, Contract, Job
+from src.contract.contract_model import Contract, ContractStatus
+from src.job.job_model import Job
+from src.profile.profile_model import Profile, ProfileType
 from tests.integration.util.data_fixture import DataFixture
 
 fake = Faker()

@@ -3,9 +3,9 @@ from http import HTTPStatus
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
-from src.enums import ContractStatus
+from src.contract.contract_model import Contract, ContractStatus
 from src.exceptions import AppException
-from src.models import Contract, Profile
+from src.profile.profile_model import Profile
 
 
 class ContractsService:

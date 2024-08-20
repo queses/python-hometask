@@ -1,7 +1,7 @@
 from flask import Flask
 from sqlalchemy.orm import scoped_session, Session
 
-from src.jobs.jobs_service import JobsService
+from src.job.jobs_service import JobsService
 from src.util.flask import authenticate
 
 

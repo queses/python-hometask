@@ -2,8 +2,8 @@ import random
 
 from dotenv import load_dotenv
 
-from src.enums import ProfileType
-from src.services.profile_service import ProfileService
+from src.profile.profile_model import ProfileType
+from src.profile.profiles_service import ProfileService
 from src.util.orm import Orm
 
 random.seed()

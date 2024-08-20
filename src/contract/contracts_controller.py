@@ -2,7 +2,7 @@ from flask import Flask, request
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import scoped_session, Session
 
-from src.contracts.contracts_service import ContractsService
+from src.contract.contracts_service import ContractsService
 from src.util.flask import authenticate
 
 

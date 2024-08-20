@@ -5,9 +5,9 @@ from flask import Flask
 from pydantic import ValidationError
 from sqlalchemy.orm import scoped_session
 
-from src.contracts.contracts_controller import ContractsController
+from src.contract.contracts_controller import ContractsController
 from src.exceptions import AppException
-from src.jobs.jobs_controller import JobsController
+from src.job.jobs_controller import JobsController
 from src.util.orm import Orm
 from src.util.flask import CustomJSONEncoder
 

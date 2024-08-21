@@ -11,11 +11,11 @@ class TestContractsService:
         self.session = Orm().session()
         self.sut = ContractsService(self.session)
 
-        self.client_1 = ProfileFixture.client()
+        self.contract_1 = ContractFixture()
+        self.client_1 = self.contract_1.client
+        self.contractor_1 = self.contract_1.contractor
         self.client_2 = ProfileFixture.client()
-        self.contractor_1 = ProfileFixture.contractor()
         self.contractor_2 = ProfileFixture.contractor()
-        self.contract_1 = ContractFixture(self.client_1, self.contractor_1)
         self.contract_2_in_progress = ContractFixture(
             self.client_1, self.contractor_1
         ).in_progress()

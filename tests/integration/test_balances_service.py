@@ -6,8 +6,6 @@ from src.exceptions import BadRequestException
 from src.profile.balances_service import BalancesService
 from src.util.orm import Orm
 from tests.integration.data_fixtures import (
-    ProfileFixture,
-    ContractFixture,
     JobFixture,
     DataFixture,
 )
@@ -19,10 +17,9 @@ class TestContractsService:
         self.sut = BalancesService(self.session)
         self.job_price = Decimal(10)
 
-        self.client_1 = ProfileFixture.client()
-        self.contractor_1 = ProfileFixture.client()
-        self.contract_1 = ContractFixture(self.client_1, self.contractor_1)
-        self.job_1 = JobFixture(self.contract_1).with_price(self.job_price)
+        self.job_1 = JobFixture().with_price(self.job_price)
+        self.contract_1 = self.job_1.contract
+        self.client_1 = self.contract_1.client
         self.job_2 = JobFixture(self.contract_1).with_price(self.job_price)
         self.job_3_paid = JobFixture(self.contract_1).paid().with_price(self.job_price)
 
@@ -31,12 +28,7 @@ class TestContractsService:
         self.session.close()
 
     def test_deposit(self):
-        DataFixture.save_flush(
-            self.session,
-            self.job_1,
-            self.job_2,
-            self.job_3_paid,
-        )
+        DataFixture.save_flush(self.session, self.job_1, self.job_2, self.job_3_paid)
 
         old_balance = self.client_1.m.balance
 
@@ -44,11 +36,7 @@ class TestContractsService:
         assert self.client_1.m.balance == old_balance + 1
 
     def test_deposit_max_amount(self):
-        DataFixture.save_flush(
-            self.session,
-            self.job_1,
-            self.job_2,
-        )
+        DataFixture.save_flush(self.session, self.job_1, self.job_2)
 
         old_balance = self.client_1.m.balance
 
@@ -57,10 +45,7 @@ class TestContractsService:
         assert self.client_1.m.balance == old_balance
 
     def test_deposit_amount_positive(self):
-        DataFixture.save_flush(
-            self.session,
-            self.job_1,
-        )
+        DataFixture.save_flush(self.session, self.job_1)
 
         old_balance = self.client_1.m.balance
 

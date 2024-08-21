@@ -35,11 +35,15 @@ class ProfileFixture(DataFixture[Profile]):
 
 
 class ContractFixture(DataFixture[Contract]):
-    def __init__(self, client: ProfileFixture, contractor: ProfileFixture):
+    def __init__(
+        self, client: ProfileFixture | None = None, contractor: ProfileFixture | None = None
+    ):
+        self.client = client or ProfileFixture.client()
+        self.contractor = contractor or ProfileFixture.contractor()
         self._m = Contract(
             terms=fake.text(10),
-            client=self._unwrap(client),
-            contractor=self._unwrap(contractor),
+            client=self._unwrap(self.client),
+            contractor=self._unwrap(self.contractor),
         )
 
     def in_progress(self):
@@ -52,11 +56,12 @@ class ContractFixture(DataFixture[Contract]):
 
 
 class JobFixture(DataFixture[Job]):
-    def __init__(self, contract: ContractFixture):
+    def __init__(self, contract: ContractFixture | None = None):
+        self.contract = contract or ContractFixture()
         self._m = Job(
             description=fake.text(10),
             price=Decimal(10),
-            contract=self._unwrap(contract),
+            contract=self._unwrap(self.contract),
         )
 
     def with_price(self, value: Decimal | int):

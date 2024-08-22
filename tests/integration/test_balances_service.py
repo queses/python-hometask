@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
 
 from src.exceptions import BadRequestException
 from src.profile.balances_service import BalancesService
@@ -49,9 +50,9 @@ class TestContractsService:
 
         old_balance = self.client_1.m.balance
 
-        with pytest.raises(BadRequestException):
+        with pytest.raises(ValidationError):
             self.sut.deposit(self.client_1.m.id, Decimal(0))
-        with pytest.raises(BadRequestException):
+        with pytest.raises(ValidationError):
             self.sut.deposit(self.client_1.m.id, Decimal(-1))
 
         assert self.client_1.m.balance == old_balance

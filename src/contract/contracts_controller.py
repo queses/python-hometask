@@ -6,7 +6,7 @@ from src.contract.contracts_service import ContractsService
 from src.util.flask import authenticate
 
 
-class CreateContract(BaseModel):
+class CreateContractData(BaseModel):
     contractor_id: int
     terms: str = Field(min_length=1)
 
@@ -29,5 +29,5 @@ class ContractsController:
 
     @authenticate()
     def create(self, profile_id: int):
-        data = CreateContract(**request.get_json())
+        data = CreateContractData(**request.get_json())
         return self.service().create(profile_id, data.contractor_id, data.terms).to_dict()

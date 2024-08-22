@@ -1,10 +1,12 @@
 from decimal import Decimal
 
+from pydantic import validate_call
 from sqlalchemy.orm import Session
 
 from src.exceptions import BadRequestException
 from src.job.jobs_service import JobsService
 from src.profile.profile_model import Profile, ProfileType
+from src.util.datatypes import PositiveMoney
 
 
 class BalancesService:
@@ -12,10 +14,8 @@ class BalancesService:
         self.session = session
         self.jobs_service = JobsService(session)
 
-    def deposit(self, client_id: int, amount: Decimal):
-        if amount <= 0:
-            raise BadRequestException("Amount must be positive")
-
+    @validate_call
+    def deposit(self, client_id: int, amount: PositiveMoney):
         profile = (
             self.session.query(Profile)
             .filter(Profile.id == client_id, Profile.type == ProfileType.client)

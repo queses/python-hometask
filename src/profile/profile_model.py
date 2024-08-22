@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from enum import StrEnum
 
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, MappedAsDataclass
 from sqlalchemy.sql import func
 
@@ -32,5 +33,9 @@ class Profile(MappedAsDataclass, BaseModel):
     created_at: Mapped[datetime] = mapped_column(default=func.now())
     updated_at: Mapped[datetime] = mapped_column(default=func.now(), onupdate=func.now())
 
+    @hybrid_property
+    def full_name(self) -> str:
+        return self.first_name + " " + self.last_name
+
     def __repr__(self) -> str:
-        return f"#{self.id} {self.first_name} {self.last_name} (created {self.created_at.isoformat()!r}, updated {self.updated_at.isoformat()!r})"
+        return f"#{self.id} {self.full_name} (created {self.created_at.isoformat()!r}, updated {self.updated_at.isoformat()!r})"

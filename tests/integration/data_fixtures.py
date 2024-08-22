@@ -29,6 +29,10 @@ class ProfileFixture(DataFixture[Profile]):
         )
         self._m.balance = Decimal(100)
 
+    def with_profession(self, value: str):
+        self._m.profession = value
+        return self
+
     def with_balance(self, value: Decimal | int):
         self._m.balance = value if isinstance(value, Decimal) else Decimal(value)
         return self
@@ -66,6 +70,10 @@ class JobFixture(DataFixture[Job]):
 
     def with_price(self, value: Decimal | int):
         self._m.price = value if isinstance(value, Decimal) else Decimal(value)
+        return self
+
+    def with_created_at(self, value: datetime):
+        self._m.created_at = value
         return self
 
     def paid(self):

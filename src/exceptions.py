@@ -10,18 +10,17 @@ class AppException(Exception):
     def to_dict(self):
         return {"code": self.code, "message": self.message, "data": self.data}
 
-    pass
-
 
 class NotFoundException(AppException):
     def __init__(self, message: str, data: object | None = None):
         super().__init__(HTTPStatus.NOT_FOUND, message, data)
-
-    pass
 
 
 class BadRequestException(AppException):
     def __init__(self, message: str, data: object | None = None):
         super().__init__(HTTPStatus.BAD_REQUEST, message, data)
 
-    pass
+
+class ForbiddenException(AppException):
+    def __init__(self, message: str, data: object | None = None):
+        super().__init__(HTTPStatus.FORBIDDEN, message, data)
